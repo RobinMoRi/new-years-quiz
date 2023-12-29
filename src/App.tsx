@@ -7,6 +7,10 @@ import "react-vertical-timeline-component/style.min.css";
 import {
   Box,
   Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
   Grid,
   Stack,
   Typography,
@@ -17,6 +21,21 @@ import SecurityIcon from "@mui/icons-material/Security";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import LocalMoviesIcon from "@mui/icons-material/LocalMovies";
 import ReactAudioPlayer from "react-audio-player";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import PublicIcon from "@mui/icons-material/Public";
+import MusicNoteIcon from "@mui/icons-material/MusicNote";
+import SynagogueIcon from "@mui/icons-material/Synagogue";
+import FlightLandIcon from "@mui/icons-material/FlightLand";
+import DiamondIcon from "@mui/icons-material/Diamond";
+import SportsHockeyIcon from "@mui/icons-material/SportsHockey";
+import CastleIcon from "@mui/icons-material/Castle";
+
+const darkTheme = createTheme({
+  palette: {
+    mode: "dark",
+  },
+});
 
 import "./App.css";
 
@@ -44,17 +63,18 @@ function AnswerButton({
       variant="outlined"
       size="small"
       onClick={() => setClicked((prev) => !prev)}
-      fullWidth
     >
-      {prefix}. {answer.value}
+      <Typography variant="caption">
+        {prefix}. {answer.value}
+      </Typography>
     </Button>
   );
 }
 
 const cardStyle = {
   background: "#242424",
-  height: "95vh",
-  color: "#fff",
+  padding: 0,
+  height: "auto",
 };
 
 function QuestionCard({
@@ -68,7 +88,7 @@ function QuestionCard({
     <VerticalTimelineElement
       id={question.date}
       className="vertical-timeline-element--work"
-      contentStyle={cardStyle}
+      contentStyle={{ ...cardStyle, marginBottom: 450 }}
       contentArrowStyle={{
         borderRight: "7px solid  #242424",
       }}
@@ -77,50 +97,49 @@ function QuestionCard({
       icon={question.icon}
       iconOnClick={onClick}
     >
-      <Stack alignItems="center" spacing={2}>
-        <Typography variant="caption">{question.date}</Typography>
-        <Box
-          component="img"
-          sx={{
-            // height: 233,
-            // width: 300,
-            maxHeight: { xs: 233, md: 200 },
-            maxWidth: { xs: 350, md: 450 },
-          }}
-          alt="Question image."
-          src={question.image}
-        />
-        {question.media ? (
-          <ReactAudioPlayer src={question.media} controls />
-        ) : null}
-        <Typography variant="body1">{question.question}</Typography>
-
-        <Grid container spacing={2} marginTop={2} px={8}>
-          {question.answers.map((answer, idx) => {
-            return (
-              <Grid item xs={6}>
-                <AnswerButton
-                  answer={answer}
-                  prefix={["A", "B", "C", "D"][idx]}
-                />
-              </Grid>
-            );
-          })}
-          {question.extra
-            ? question.extra.map((answer, idx) => {
-                return (
-                  <Grid item xs={6}>
-                    <AnswerButton
-                      answer={answer}
-                      prefix={["E", "F", "G", "H"][idx]}
-                      extra
-                    />
-                  </Grid>
-                );
-              })
-            : null}
-        </Grid>
-      </Stack>
+      <Card>
+        <CardContent>
+          <CardMedia
+            component="img"
+            height={240}
+            alt="Question image."
+            image={question.image}
+            sx={{ objectFit: "contain" }}
+          />
+          <Typography variant="caption">{question.date}</Typography>
+          <Typography variant="body1" color="text.secondary">
+            {question.question}
+          </Typography>
+          {question.media ? (
+            <ReactAudioPlayer marginTop={2} src={question.media} controls />
+          ) : null}
+          <Grid container spacing={2} mt={2}>
+            {question.answers.map((answer, idx) => {
+              return (
+                <Grid item xs={6}>
+                  <AnswerButton
+                    answer={answer}
+                    prefix={["A", "B", "C", "D"][idx]}
+                  />
+                </Grid>
+              );
+            })}
+            {question.extra
+              ? question.extra.map((answer, idx) => {
+                  return (
+                    <Grid item xs={6}>
+                      <AnswerButton
+                        answer={answer}
+                        prefix={["E", "F", "G", "H"][idx]}
+                        extra
+                      />
+                    </Grid>
+                  );
+                })
+              : null}
+          </Grid>
+        </CardContent>
+      </Card>
     </VerticalTimelineElement>
   );
 }
@@ -141,7 +160,8 @@ function App() {
   };
 
   return (
-    <>
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
       <VerticalTimeline layout="1-column-left">
         {questions.map((question: Question, idx) => {
           return (
@@ -169,24 +189,25 @@ function App() {
                   icon={<PlayCircleFilledWhiteIcon />}
                 >
                   <Stack spacing={2} alignItems="center">
-                    <Typography variant="h6">Nyårsquizzet 2024</Typography>
-
-                    <Box
-                      component="img"
-                      sx={{
-                        height: 233,
-                        width: 500,
-                        maxHeight: { xs: 233, md: 167 },
-                        maxWidth: { xs: 350, md: 250 },
-                      }}
-                      alt="Nyårsquizzet"
-                      src="https://static.vecteezy.com/system/resources/previews/013/270/791/original/year-2023-outlook-economic-forecast-or-future-vision-business-opportunity-or-challenge-ahead-year-review-or-analysis-concept-confidence-businessman-with-binoculars-climb-up-ladder-on-year-2023-vector.jpg"
-                    />
-                    <Typography variant="body1">
-                      Ett quiz med frågor om året som gått. Totalt 12 frågor -
-                      en fråga per månad. Varje fråga ger en poäng om inget
-                      annat anges.
-                    </Typography>
+                    <Card>
+                      <CardContent>
+                        <CardMedia
+                          component="img"
+                          height={240}
+                          alt="Question image."
+                          image="https://static.vecteezy.com/system/resources/previews/013/270/791/original/year-2023-outlook-economic-forecast-or-future-vision-business-opportunity-or-challenge-ahead-year-review-or-analysis-concept-confidence-businessman-with-binoculars-climb-up-ladder-on-year-2023-vector.jpg"
+                          sx={{ objectFit: "contain" }}
+                        />
+                        <Typography variant="caption">
+                          Nyårsquizzet 2024
+                        </Typography>
+                        <Typography variant="body1" color="text.secondary">
+                          Ett quiz med frågor om året som gått. Totalt 12 frågor
+                          - en fråga per månad. Varje fråga ger en poäng om
+                          inget annat anges.
+                        </Typography>
+                      </CardContent>
+                    </Card>
                   </Stack>
                 </VerticalTimelineElement>
               ) : null}
@@ -202,7 +223,7 @@ function App() {
           );
         })}
       </VerticalTimeline>
-    </>
+    </ThemeProvider>
   );
 }
 
@@ -273,7 +294,7 @@ const questions: Question[] = [
     image:
       "https://assets.thenewhumanitarian.org/s3fs-public/2023-05/sudan-protests-00.jpg",
     date: "April 2023",
-    icon: <WorkIcon />,
+    icon: <PublicIcon />,
   },
   {
     question:
@@ -293,8 +314,8 @@ const questions: Question[] = [
     image:
       "https://upload.wikimedia.org/wikipedia/en/thumb/8/8a/Eurovision_Song_Contest_2023_logo.svg/500px-Eurovision_Song_Contest_2023_logo.svg.png",
     date: "Maj 2023",
-    icon: <WorkIcon />,
-    media: "../public/videoplayback.mp4",
+    icon: <MusicNoteIcon />,
+    media: "./videoplayback.mp4",
   },
   {
     question:
@@ -322,7 +343,7 @@ const questions: Question[] = [
     image:
       "https://universitetslararen.se/wp-content/uploads/2023/10/gaza-israel-map560x350-1024x640.jpg",
     date: "Juli 2023",
-    icon: <WorkIcon />,
+    icon: <SynagogueIcon />,
   },
   {
     question:
@@ -336,7 +357,7 @@ const questions: Question[] = [
     image:
       "https://cached-images.bonnier.news/cfcdn-screen9/img/G/p/Gp7ny0LGhuClF0Et5HqUIg_image/image.jpg?interpolation=lanczos-none&fit=around%7C480:270&crop=480:h;center,top&output-quality=80",
     date: "Augusti 2023",
-    icon: <WorkIcon />,
+    icon: <FlightLandIcon />,
   },
   {
     question:
@@ -364,7 +385,7 @@ const questions: Question[] = [
     image:
       "https://cdn.thecollector.com/wp-content/uploads/2023/06/what-is-the-nobel-prize-coin-award.jpg",
     date: "Oktober 2023",
-    icon: <WorkIcon />,
+    icon: <DiamondIcon />,
   },
   {
     question:
@@ -378,7 +399,7 @@ const questions: Question[] = [
     image:
       "https://media.gq.com/photos/64398a2692b71bd35e95a87d/master/w_1600%2Cc_limit/henrik%2520stick.jpg",
     date: "November 2023",
-    icon: <WorkIcon />,
+    icon: <SportsHockeyIcon />,
   },
   {
     question:
@@ -392,6 +413,6 @@ const questions: Question[] = [
     image:
       "https://polarjournal.ch/wp-content/uploads/2023/12/Javier_Milei_y_Victoria_Villarruel.jpg",
     date: "December 2023",
-    icon: <WorkIcon />,
+    icon: <CastleIcon />,
   },
 ];
