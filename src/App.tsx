@@ -27,7 +27,7 @@ function AnswerButton({
 }: {
   answer: { value: string; correct: boolean };
   prefix: string;
-  extra: boolean;
+  extra?: boolean;
 }) {
   const [clicked, setClicked] = useState<boolean>(false);
   return (
@@ -151,7 +151,7 @@ function App() {
                   contentStyle={{
                     ...cardStyle,
                     marginBottom: windowSize.current[1] * 0.6,
-                    height: null,
+                    height: undefined,
                   }}
                   contentArrowStyle={{
                     borderRight: "7px solid  #242424",
@@ -193,7 +193,6 @@ function App() {
               <QuestionCard
                 question={question}
                 key={question.date}
-                windowSize={windowSize}
                 onClick={() => {
                   const nextId = questions[idx + 1].date;
                   handleScroll(nextId);
