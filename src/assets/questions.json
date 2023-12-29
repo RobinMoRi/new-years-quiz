@@ -1,0 +1,12 @@
+[
+  {
+    "question": "Vem är jag?",
+    "answers": ["Svar 1", "Svar 2", "Svar 3", "Svar 4"],
+    "date": "Januari 2023"
+  },
+  {
+    "question": "Vem är jag?",
+    "answers": ["Svar 1", "Svar 2", "Svar 3", "Svar 4"],
+    "date": ""
+  }
+]
