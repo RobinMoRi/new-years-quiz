@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   VerticalTimeline,
   VerticalTimelineElement,
@@ -19,7 +19,6 @@ import LocalMoviesIcon from "@mui/icons-material/LocalMovies";
 import ReactAudioPlayer from "react-audio-player";
 
 import "./App.css";
-import { padding } from "../node_modules/@mui/system/spacing.d";
 
 function AnswerButton({
   answer,
@@ -46,7 +45,6 @@ function AnswerButton({
       size="small"
       onClick={() => setClicked((prev) => !prev)}
       fullWidth
-      fullHeight
     >
       {prefix}. {answer.value}
     </Button>
