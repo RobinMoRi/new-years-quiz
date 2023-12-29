@@ -5,10 +5,8 @@ import {
 } from "react-vertical-timeline-component";
 import "react-vertical-timeline-component/style.min.css";
 import {
-  Box,
   Button,
   Card,
-  CardActions,
   CardContent,
   CardMedia,
   Grid,
@@ -111,7 +109,7 @@ function QuestionCard({
             {question.question}
           </Typography>
           {question.media ? (
-            <ReactAudioPlayer marginTop={2} src={question.media} controls />
+            <ReactAudioPlayer src={question.media} controls />
           ) : null}
           <Grid container spacing={2} mt={2}>
             {question.answers.map((answer, idx) => {
