@@ -28,11 +28,19 @@ function QuestionCard({ question }: { question: Question }) {
       iconStyle={{ background: "#242424", color: "#fff", cursor: "pointer" }}
       icon={question.icon}
     >
-      <Typography className="vertical-timeline-element-title" variant="h3">
-        {question.question}
-      </Typography>
-      <Typography variant="h4">Miami, FL</Typography>
-      <Typography variant="p">
+      <Box
+        component="img"
+        sx={{
+          height: 233,
+          width: 500,
+          maxHeight: { xs: 233, md: 167 },
+          maxWidth: { xs: 350, md: 250 },
+        }}
+        alt="Question image."
+        src="image"
+      />
+      <Typography variant="h6">{question.question}</Typography>
+      <Typography variant="body1">
         Creative Direction, User Experience, Visual Design, Project Management,
         Team Leading
       </Typography>
@@ -72,7 +80,7 @@ function App() {
                   }
                 >
                   <Typography variant="h6">Nyårsquizzet 2024</Typography>
-                  <Typography variant="p">
+                  <Typography variant="body1">
                     Ett quiz med frågor om året som gått. Totalt 12 frågor - en
                     fråga per månad.
                   </Typography>
@@ -114,83 +122,83 @@ const questions: Question[] = [
     answers: ["Svar 1", "Svar 2", "Svar 3", "Svar 4"],
     image: "",
     date: "Januari 2023",
-    icon: <WorkIcon onClick={() => console.log("hejehe")} />,
+    icon: <WorkIcon onClick={() => window.scrollTo(0, 650 * 2)} />,
   },
   {
     question: "Vem är jag?",
     answers: ["Svar 1", "Svar 2", "Svar 3", "Svar 4"],
     image: "",
     date: "Februari 2023",
-    icon: <WorkIcon />,
+    icon: <WorkIcon onClick={() => window.scrollTo(0, 650 * 3)} />,
   },
   {
     question: "Vem är jag?",
     answers: ["Svar 1", "Svar 2", "Svar 3", "Svar 4"],
     image: "",
     date: "Mars 2023",
-    icon: <WorkIcon />,
+    icon: <WorkIcon onClick={() => window.scrollTo(0, 650 * 4)} />,
   },
   {
     question: "Vem är jag?",
     answers: ["Svar 1", "Svar 2", "Svar 3", "Svar 4"],
     image: "",
     date: "April 2023",
-    icon: <WorkIcon />,
+    icon: <WorkIcon onClick={() => window.scrollTo(0, 650 * 5)} />,
   },
   {
     question: "Vem är jag?",
     answers: ["Svar 1", "Svar 2", "Svar 3", "Svar 4"],
     image: "",
     date: "Maj 2023",
-    icon: <WorkIcon />,
+    icon: <WorkIcon onClick={() => window.scrollTo(0, 650 * 6)} />,
   },
   {
     question: "Vem är jag?",
     answers: ["Svar 1", "Svar 2", "Svar 3", "Svar 4"],
     image: "",
     date: "Juni 2023",
-    icon: <WorkIcon />,
+    icon: <WorkIcon onClick={() => window.scrollTo(0, 650 * 7)} />,
   },
   {
     question: "Vem är jag?",
     answers: ["Svar 1", "Svar 2", "Svar 3", "Svar 4"],
     image: "",
     date: "Juli 2023",
-    icon: <WorkIcon />,
+    icon: <WorkIcon onClick={() => window.scrollTo(0, 650 * 8)} />,
   },
   {
     question: "Vem är jag?",
     answers: ["Svar 1", "Svar 2", "Svar 3", "Svar 4"],
     image: "",
     date: "Augusti 2023",
-    icon: <WorkIcon />,
+    icon: <WorkIcon onClick={() => window.scrollTo(0, 650 * 9)} />,
   },
   {
     question: "Vem är jag?",
     answers: ["Svar 1", "Svar 2", "Svar 3", "Svar 4"],
     image: "",
     date: "September 2023",
-    icon: <WorkIcon />,
+    icon: <WorkIcon onClick={() => window.scrollTo(0, 650 * 10)} />,
   },
   {
     question: "Vem är jag?",
     answers: ["Svar 1", "Svar 2", "Svar 3", "Svar 4"],
     image: "",
     date: "Oktober 2023",
-    icon: <WorkIcon />,
+    icon: <WorkIcon onClick={() => window.scrollTo(0, 650 * 11)} />,
   },
   {
     question: "Vem är jag?",
     answers: ["Svar 1", "Svar 2", "Svar 3", "Svar 4"],
     image: "",
     date: "November 2023",
-    icon: <WorkIcon />,
+    icon: <WorkIcon onClick={() => window.scrollTo(0, 650 * 12)} />,
   },
   {
     question: "Vem är jag?",
     answers: ["Svar 1", "Svar 2", "Svar 3", "Svar 4"],
     image: "",
     date: "December 2023",
-    icon: <WorkIcon />,
+    icon: <WorkIcon onClick={() => window.scrollTo(0, 650 * 13)} />,
   },
 ];
