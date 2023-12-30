@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState, Fragment } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   VerticalTimeline,
   VerticalTimelineElement,
 } from "react-vertical-timeline-component";
 import "react-vertical-timeline-component/style.min.css";
+import { useSearchParams } from "react-router-dom";
 import {
   Button,
   Card,
@@ -37,6 +38,7 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
+import DoneIcon from "@mui/icons-material/Done";
 import "./App.css";
 const darkTheme = createTheme({
   palette: {
@@ -105,10 +107,12 @@ type AnswersForm = {
 
 function QuestionCard({
   question,
+  admin,
   onClick,
   onClickBack,
 }: {
   question: Question;
+  admin: boolean;
   onClick: (answers: AnswersForm) => void;
   onClickBack: () => void;
 }) {
@@ -213,7 +217,8 @@ function QuestionCard({
               <IconButton
                 onClick={() => onClick(answers)}
                 disabled={
-                  (question.extra && !answers.extra) || !answers.regular
+                  !admin &&
+                  ((question.extra && !answers.extra) || !answers.regular)
                 }
               >
                 <ArrowForwardIosIcon />
@@ -235,6 +240,7 @@ function App() {
   const windowSize = useRef([window.innerWidth, window.innerHeight]);
   const [showResult, setShowResult] = useState<number | null>(null);
   const [resultCardtop, setResultCardTop] = useState<number>(0);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const handleScroll = (id: string) => {
     const element = document.getElementById(id);
@@ -248,6 +254,8 @@ function App() {
     }
   };
 
+  useEffect(() => {}, []);
+
   useEffect(() => {
     const element = document.getElementById("result-card");
     if (element) {
@@ -255,7 +263,7 @@ function App() {
       const absoluteElementTop = rect.top + window.pageYOffset;
       setResultCardTop(absoluteElementTop);
     }
-  }, []);
+  }, [showResult]);
 
   useEffect(() => {
     console.debug({ allAnswers });
@@ -357,6 +365,7 @@ function App() {
             <QuestionCard
               question={question}
               key={question.date}
+              admin={searchParams.get("admin") === "True"}
               onClick={(answersForm: AnswersForm) =>
                 handleClickNext(answersForm, idx)
               }
@@ -370,16 +379,7 @@ function App() {
             />
           );
         })}
-        <Confetti
-          width={windowSize.current[0]}
-          height={windowSize.current[1]}
-          confettiSource={{
-            x: 0,
-            y: resultCardtop,
-            w: windowSize.current[0],
-            h: windowSize.current[1],
-          }}
-        />
+
         <VerticalTimelineElement
           id="result-card"
           key="result-card"
@@ -398,7 +398,7 @@ function App() {
             color: "#fff",
             cursor: "pointer",
           }}
-          icon={<PlayCircleFilledWhiteIcon />}
+          icon={<DoneIcon />}
         >
           <Stack spacing={2} alignItems="center">
             <Card sx={{ width: "100%" }}>
@@ -418,21 +418,13 @@ function App() {
                     {showResult ? showResult.toString() : 0}
                   </Typography>
                 </Stack>
+                {showResult && showResult >= 10 ? (
+                  <Confetti
+                    width={windowSize.current[0]}
+                    height={windowSize.current[1]}
+                  />
+                ) : null}
               </CardContent>
-              <CardActions sx={{ justifyContent: "center" }}>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={() => {
-                    const nextId = "intro-card";
-                    handleScroll(nextId);
-                    setAllAnswers({});
-                    setShowResult(null);
-                  }}
-                >
-                  Starta Om
-                </Button>
-              </CardActions>
             </Card>
           </Stack>
         </VerticalTimelineElement>
