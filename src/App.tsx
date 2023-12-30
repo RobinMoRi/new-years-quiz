@@ -40,7 +40,7 @@ import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 import DoneIcon from "@mui/icons-material/Done";
 import "./App.css";
-const darkTheme = createTheme({
+const darkTheme: any = createTheme({
   palette: {
     mode: "dark",
   },
@@ -177,7 +177,8 @@ function QuestionCard({
                       handleSetAnswer(answer, false)
                     }
                     clicked={
-                      answers.regular && answers.regular.value === answer.value
+                      !!answers.regular &&
+                      answers.regular.value === answer.value
                     }
                     answer={answer}
                     prefix={["A", "B", "C", "D"][idx]}
@@ -198,7 +199,8 @@ function QuestionCard({
                           handleSetAnswer(answer, true);
                         }}
                         clicked={
-                          answers.extra && answers.extra.value === answer.value
+                          !!answers.extra &&
+                          answers.extra.value === answer.value
                         }
                         answer={answer}
                         prefix={["E", "F", "G", "H"][idx]}
@@ -239,8 +241,7 @@ function App() {
   const [allAnswers, setAllAnswers] = useState<AllAnswers>({});
   const windowSize = useRef([window.innerWidth, window.innerHeight]);
   const [showResult, setShowResult] = useState<number | null>(null);
-  const [resultCardtop, setResultCardTop] = useState<number>(0);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, _] = useSearchParams();
 
   const handleScroll = (id: string) => {
     const element = document.getElementById(id);
@@ -253,17 +254,6 @@ function App() {
       });
     }
   };
-
-  useEffect(() => {}, []);
-
-  useEffect(() => {
-    const element = document.getElementById("result-card");
-    if (element) {
-      const rect = element.getBoundingClientRect();
-      const absoluteElementTop = rect.top + window.pageYOffset;
-      setResultCardTop(absoluteElementTop);
-    }
-  }, [showResult]);
 
   useEffect(() => {
     console.debug({ allAnswers });
