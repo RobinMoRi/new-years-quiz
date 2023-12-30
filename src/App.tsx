@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState, Fragment } from "react";
 import {
   VerticalTimeline,
   VerticalTimelineElement,
@@ -7,12 +7,15 @@ import "react-vertical-timeline-component/style.min.css";
 import {
   Button,
   Card,
+  CardActions,
   CardContent,
   CardMedia,
   Grid,
   Stack,
   Typography,
+  IconButton,
 } from "../node_modules/@mui/material/index";
+import Confetti from "react-confetti";
 import WorkIcon from "@mui/icons-material/Work";
 import PlayCircleFilledWhiteIcon from "@mui/icons-material/PlayCircleFilledWhite";
 import SecurityIcon from "@mui/icons-material/Security";
@@ -28,41 +31,60 @@ import FlightLandIcon from "@mui/icons-material/FlightLand";
 import DiamondIcon from "@mui/icons-material/Diamond";
 import SportsHockeyIcon from "@mui/icons-material/SportsHockey";
 import CastleIcon from "@mui/icons-material/Castle";
-
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
+import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
+import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
+import "./App.css";
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
   },
+  overrides: {
+    MuiCard: {
+      root: {
+        backgroundImage: "none",
+        boxShadow: "none",
+      },
+    },
+    MuiPaper: {
+      root: {
+        backgroundImage: "none",
+        boxShadow: "none",
+      },
+    },
+  },
 });
-
-import "./App.css";
 
 function AnswerButton({
   answer,
   prefix,
+  onClickButton,
+  clicked,
   extra = false,
 }: {
-  answer: { value: string; correct: boolean };
+  answer: Answer;
   prefix: string;
+  onClickButton: (answer: Answer) => void;
+  clicked: boolean;
   extra?: boolean;
 }) {
-  const [clicked, setClicked] = useState<boolean>(false);
   return (
     <Button
-      color={
-        !clicked
-          ? !extra
-            ? "primary"
-            : "secondary"
-          : answer.correct
-          ? "success"
-          : "error"
-      }
-      variant="outlined"
+      color={!extra ? "primary" : "secondary"}
+      variant={clicked ? "contained" : "outlined"}
       size="small"
-      onClick={() => setClicked((prev) => !prev)}
+      sx={{ width: "100%", height: "100%" }}
+      onClick={() => {
+        onClickButton(answer);
+      }}
     >
-      <Typography variant="caption">
+      <Typography
+        variant="caption"
+        sx={{ width: "100%", wordWrap: "break-word" }}
+      >
         {prefix}. {answer.value}
       </Typography>
     </Button>
@@ -70,30 +92,61 @@ function AnswerButton({
 }
 
 const cardStyle = {
-  background: "#242424",
+  background: "#121212",
   padding: 0,
-  height: "auto",
+  // height: "auto",
+  boxShadow: "none",
+};
+
+type AnswersForm = {
+  regular: null | Answer;
+  extra: null | Answer;
 };
 
 function QuestionCard({
   question,
   onClick,
+  onClickBack,
 }: {
   question: Question;
-  onClick: () => void;
+  onClick: (answers: AnswersForm) => void;
+  onClickBack: () => void;
 }) {
+  const [answers, setAnswers] = useState<AnswersForm>({
+    regular: null,
+    extra: null,
+  });
+
+  const handleSetAnswer = (answer: Answer, extra: boolean = false) => {
+    console.debug("Set answer");
+    if (extra) {
+      console.debug("extra");
+      setAnswers((prev) => {
+        return { ...prev, extra: answer };
+      });
+    } else {
+      console.debug("regular");
+      setAnswers((prev) => {
+        return { ...prev, regular: answer };
+      });
+    }
+  };
+
+  useEffect(() => {
+    console.debug({ answers });
+  }, [answers]);
+
   return (
     <VerticalTimelineElement
       id={question.date}
       className="vertical-timeline-element--work"
       contentStyle={{ ...cardStyle, marginBottom: 450 }}
       contentArrowStyle={{
-        borderRight: "7px solid  #242424",
+        borderRight: "7px solid #1E1E1E",
       }}
-      // date={question.date}
-      iconStyle={{ background: "#242424", color: "#fff", cursor: "pointer" }}
+      iconStyle={{ background: "#121212", color: "#fff", cursor: "pointer" }}
       icon={question.icon}
-      iconOnClick={onClick}
+      iconOnClick={() => onClick(answers)}
     >
       <Card>
         <CardContent>
@@ -114,8 +167,14 @@ function QuestionCard({
           <Grid container spacing={2} mt={2}>
             {question.answers.map((answer, idx) => {
               return (
-                <Grid item xs={6}>
+                <Grid item xs={6} key={`answer-button-${answer.value}`}>
                   <AnswerButton
+                    onClickButton={(answer: Answer) =>
+                      handleSetAnswer(answer, false)
+                    }
+                    clicked={
+                      answers.regular && answers.regular.value === answer.value
+                    }
                     answer={answer}
                     prefix={["A", "B", "C", "D"][idx]}
                   />
@@ -125,8 +184,18 @@ function QuestionCard({
             {question.extra
               ? question.extra.map((answer, idx) => {
                   return (
-                    <Grid item xs={6}>
+                    <Grid
+                      item
+                      xs={6}
+                      key={`extra-answer-button-${answer.value}`}
+                    >
                       <AnswerButton
+                        onClickButton={(answer: Answer) => {
+                          handleSetAnswer(answer, true);
+                        }}
+                        clicked={
+                          answers.extra && answers.extra.value === answer.value
+                        }
                         answer={answer}
                         prefix={["E", "F", "G", "H"][idx]}
                         extra
@@ -135,6 +204,21 @@ function QuestionCard({
                   );
                 })
               : null}
+            <Grid item xs={6}>
+              <IconButton onClick={onClickBack}>
+                <ArrowBackIosIcon />
+              </IconButton>
+            </Grid>
+            <Grid item xs={6}>
+              <IconButton
+                onClick={() => onClick(answers)}
+                disabled={
+                  (question.extra && !answers.extra) || !answers.regular
+                }
+              >
+                <ArrowForwardIosIcon />
+              </IconButton>
+            </Grid>
           </Grid>
         </CardContent>
       </Card>
@@ -142,8 +226,15 @@ function QuestionCard({
   );
 }
 
+type AllAnswers = {
+  [key: number]: AnswersForm;
+};
+
 function App() {
+  const [allAnswers, setAllAnswers] = useState<AllAnswers>({});
   const windowSize = useRef([window.innerWidth, window.innerHeight]);
+  const [showResult, setShowResult] = useState<number | null>(null);
+  const [resultCardtop, setResultCardTop] = useState<number>(0);
 
   const handleScroll = (id: string) => {
     const element = document.getElementById(id);
@@ -157,69 +248,194 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    const element = document.getElementById("result-card");
+    if (element) {
+      const rect = element.getBoundingClientRect();
+      const absoluteElementTop = rect.top + window.pageYOffset;
+      setResultCardTop(absoluteElementTop);
+    }
+  }, []);
+
+  useEffect(() => {
+    console.debug({ allAnswers });
+  }, [allAnswers]);
+
+  const handleSetShowResult = () => {
+    let points = 0;
+    for (const [_, value] of Object.entries(allAnswers)) {
+      for (const [_, answer] of Object.entries(value)) {
+        if (answer && answer.correct) {
+          points += 1;
+        }
+      }
+    }
+    setShowResult(points);
+    handleScroll("result-card");
+  };
+
+  const handleClickNext = (answersForm: AnswersForm, idx: number) => {
+    console.log({ answersForm });
+    setAllAnswers((prev) => {
+      let newAllAnswers = { ...prev };
+      newAllAnswers[idx] = answersForm;
+      return newAllAnswers;
+    });
+
+    const nextId = questions[idx + 1]?.date;
+    if (nextId) {
+      // handleScroll("intro-card");
+      handleScroll(nextId);
+    } else {
+      handleSetShowResult();
+    }
+  };
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <VerticalTimeline layout="1-column-left">
-        {questions.map((question: Question, idx) => {
-          return (
-            <>
-              {idx === 0 ? (
-                <VerticalTimelineElement
-                  contentStyle={{
-                    ...cardStyle,
-                    marginBottom: windowSize.current[1] * 0.6,
-                    height: undefined,
-                  }}
-                  contentArrowStyle={{
-                    borderRight: "7px solid  #242424",
-                  }}
-                  date=""
-                  iconStyle={{
-                    background: "#242424",
-                    color: "#fff",
-                    cursor: "pointer",
-                  }}
-                  iconOnClick={() => {
+
+      <VerticalTimeline layout="1-column-left" lineColor={"#A9A9A9"}>
+        <VerticalTimelineElement
+          id="intro-card"
+          key="intro-card"
+          style={{ background: "none" }}
+          contentStyle={{
+            ...cardStyle,
+            marginBottom: windowSize.current[1] * 0.6,
+            height: undefined,
+          }}
+          contentArrowStyle={{
+            borderRight: "7px solid #1E1E1E",
+          }}
+          date=""
+          iconStyle={{
+            background: "#121212",
+            color: "#fff",
+            cursor: "pointer",
+          }}
+          iconOnClick={() => {
+            const nextId = "Januari 2023";
+            handleScroll(nextId);
+          }}
+          icon={<PlayCircleFilledWhiteIcon />}
+        >
+          <Stack spacing={2} alignItems="center">
+            <Card>
+              <CardContent>
+                <CardMedia
+                  component="img"
+                  height={240}
+                  alt="Question image."
+                  image="https://static.vecteezy.com/system/resources/previews/013/270/791/original/year-2023-outlook-economic-forecast-or-future-vision-business-opportunity-or-challenge-ahead-year-review-or-analysis-concept-confidence-businessman-with-binoculars-climb-up-ladder-on-year-2023-vector.jpg"
+                  sx={{ objectFit: "contain" }}
+                />
+                <Typography variant="caption">Nyårsquizzet 2024</Typography>
+                <Typography variant="body1" color="text.secondary">
+                  Ett quiz med frågor om året som gått. Totalt 12 frågor - en
+                  fråga per månad. Varje fråga ger en poäng om inget annat
+                  anges.
+                </Typography>
+              </CardContent>
+              <CardActions sx={{ justifyContent: "center" }}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => {
                     const nextId = "Januari 2023";
                     handleScroll(nextId);
                   }}
-                  icon={<PlayCircleFilledWhiteIcon />}
                 >
-                  <Stack spacing={2} alignItems="center">
-                    <Card>
-                      <CardContent>
-                        <CardMedia
-                          component="img"
-                          height={240}
-                          alt="Question image."
-                          image="https://static.vecteezy.com/system/resources/previews/013/270/791/original/year-2023-outlook-economic-forecast-or-future-vision-business-opportunity-or-challenge-ahead-year-review-or-analysis-concept-confidence-businessman-with-binoculars-climb-up-ladder-on-year-2023-vector.jpg"
-                          sx={{ objectFit: "contain" }}
-                        />
-                        <Typography variant="caption">
-                          Nyårsquizzet 2024
-                        </Typography>
-                        <Typography variant="body1" color="text.secondary">
-                          Ett quiz med frågor om året som gått. Totalt 12 frågor
-                          - en fråga per månad. Varje fråga ger en poäng om
-                          inget annat anges.
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </Stack>
-                </VerticalTimelineElement>
-              ) : null}
-              <QuestionCard
-                question={question}
-                key={question.date}
-                onClick={() => {
-                  const nextId = questions[idx + 1].date;
-                  handleScroll(nextId);
-                }}
-              />
-            </>
+                  Starta
+                </Button>
+              </CardActions>
+            </Card>
+          </Stack>
+        </VerticalTimelineElement>
+        {questions.map((question: Question, idx) => {
+          return (
+            <QuestionCard
+              question={question}
+              key={question.date}
+              onClick={(answersForm: AnswersForm) =>
+                handleClickNext(answersForm, idx)
+              }
+              onClickBack={() => {
+                const prevId = questions[idx - 1]?.date;
+                if (!prevId) {
+                  handleScroll("intro-card");
+                }
+                handleScroll(prevId);
+              }}
+            />
           );
         })}
+        <Confetti
+          width={windowSize.current[0]}
+          height={windowSize.current[1]}
+          confettiSource={{
+            x: 0,
+            y: resultCardtop,
+            w: windowSize.current[0],
+            h: windowSize.current[1],
+          }}
+        />
+        <VerticalTimelineElement
+          id="result-card"
+          key="result-card"
+          style={{ background: "none" }}
+          contentStyle={{
+            ...cardStyle,
+            marginBottom: windowSize.current[1] * 0.6,
+            height: undefined,
+          }}
+          contentArrowStyle={{
+            borderRight: "7px solid #1E1E1E",
+          }}
+          date=""
+          iconStyle={{
+            background: "#121212",
+            color: "#fff",
+            cursor: "pointer",
+          }}
+          icon={<PlayCircleFilledWhiteIcon />}
+        >
+          <Stack spacing={2} alignItems="center">
+            <Card sx={{ width: "100%" }}>
+              <CardContent>
+                <Stack alignItems="center" spacing={2}>
+                  {showResult && showResult >= 10 ? (
+                    <EmojiEventsIcon />
+                  ) : showResult && showResult >= 7 ? (
+                    <EmojiEmotionsIcon />
+                  ) : showResult && showResult >= 4 ? (
+                    <SentimentNeutralIcon />
+                  ) : (
+                    <SentimentVeryDissatisfiedIcon />
+                  )}
+                  <Typography variant="caption">Ditt resultat</Typography>
+                  <Typography variant="h1">
+                    {showResult ? showResult.toString() : 0}
+                  </Typography>
+                </Stack>
+              </CardContent>
+              <CardActions sx={{ justifyContent: "center" }}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => {
+                    const nextId = "intro-card";
+                    handleScroll(nextId);
+                    setAllAnswers({});
+                    setShowResult(null);
+                  }}
+                >
+                  Starta Om
+                </Button>
+              </CardActions>
+            </Card>
+          </Stack>
+        </VerticalTimelineElement>
       </VerticalTimeline>
     </ThemeProvider>
   );
@@ -227,10 +443,12 @@ function App() {
 
 export default App;
 
+type Answer = { value: string; correct: boolean };
+
 type Question = {
   question: string;
-  answers: { value: string; correct: boolean }[];
-  extra?: { value: string; correct: boolean }[];
+  answers: Answer[];
+  extra?: Answer[];
   date: string;
   icon: any;
   image: string;
@@ -401,7 +619,7 @@ const questions: Question[] = [
   },
   {
     question:
-      "10 december tillträder Javier Milei posten som Argentinas president. Hans politiska framgång anses bygga på ett stort missnöje hos argentinska väljare med utbredd korruption och det politiska etablissemangets misslyckade hantering av ekonomin som resulterat i djup ekonomisk kris. Argentinas presidenter har en särskild byggnad som officiell arbetsplats, vad kallas den byggnaden?",
+      "(SISTA FRÅGAN) 10 december tillträder Javier Milei posten som Argentinas president. Hans politiska framgång anses bygga på ett stort missnöje hos argentinska väljare med utbredd korruption och det politiska etablissemangets misslyckade hantering av ekonomin som resulterat i djup ekonomisk kris. Argentinas presidenter har en särskild byggnad som officiell arbetsplats, vad kallas den byggnaden?",
     answers: [
       { value: "Casa Rosada", correct: true },
       { value: "Palacio del Congreso", correct: false },
