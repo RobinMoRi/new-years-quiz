@@ -40,7 +40,16 @@ import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 import DoneIcon from "@mui/icons-material/Done";
 import "./App.css";
-const darkTheme: any = createTheme({
+declare module "@mui/material/styles" {
+  interface Theme {
+    overrides: Object;
+  }
+  // allow configuration using `createTheme`
+  interface ThemeOptions {
+    overrides: Object;
+  }
+}
+const darkTheme = createTheme({
   palette: {
     mode: "dark",
   },
