@@ -17,9 +17,8 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 export const cardStyle = {
-  background: "#121212",
+  background: "none",
   padding: 0,
-  // height: "auto",
   boxShadow: "none",
 };
 
@@ -108,7 +107,7 @@ export default function QuestionCard({
       icon={question.icon}
       iconOnClick={() => onClick(answers)}
     >
-      <Card sx={{ maxHeight: "100vh", overflow: "scroll" }}>
+      <Card sx={{ maxHeight: "95vh", overflow: "scroll" }}>
         <CardContent>
           <Stack spacing={2} alignItems="center">
             <CardMedia

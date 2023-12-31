@@ -41,6 +41,9 @@ declare module "@mui/material/styles" {
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
+    background: {
+      default: "#121212CC",
+    },
   },
   overrides: {
     MuiCard: {
@@ -146,7 +149,7 @@ function App() {
                   component="img"
                   height={240}
                   alt="Question image."
-                  image="https://static.vecteezy.com/system/resources/previews/013/270/791/original/year-2023-outlook-economic-forecast-or-future-vision-business-opportunity-or-challenge-ahead-year-review-or-analysis-concept-confidence-businessman-with-binoculars-climb-up-ladder-on-year-2023-vector.jpg"
+                  image="https://cityfurnish.com/blog/wp-content/uploads/2023/12/brightly-colored-number-2024-reflecting-new-year-colored-background-welcome-min.jpg"
                   sx={{ objectFit: "contain" }}
                 />
                 <Typography variant="caption">Nyårsquizzet 2024</Typography>
