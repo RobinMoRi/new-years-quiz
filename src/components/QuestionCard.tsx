@@ -107,7 +107,7 @@ export default function QuestionCard({
       icon={question.icon}
       iconOnClick={() => onClick(answers)}
     >
-      <Card sx={{ maxHeight: "95vh", overflow: "scroll" }}>
+      <Card sx={{ maxHeight: "90vh", overflow: "scroll" }}>
         <CardContent>
           <Stack spacing={2} alignItems="center">
             <CardMedia
@@ -135,7 +135,7 @@ export default function QuestionCard({
               return (
                 <Grid
                   item
-                  xs={question.extra ? 3 : 6}
+                  xs={question.extra ? 4 : 6}
                   key={`answer-button-${answer.value}`}
                 >
                   <AnswerButton
@@ -157,7 +157,7 @@ export default function QuestionCard({
                   return (
                     <Grid
                       item
-                      xs={question.extra ? 3 : 6}
+                      xs={question.extra ? 4 : 6}
                       key={`extra-answer-button-${answer.value}`}
                     >
                       <AnswerButton
