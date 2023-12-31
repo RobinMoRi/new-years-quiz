@@ -107,7 +107,9 @@ export default function QuestionCard({
       icon={question.icon}
       iconOnClick={() => onClick(answers)}
     >
-      <Card sx={{ maxHeight: "95vh", overflow: "scroll" }}>
+      <Card
+        sx={{ maxHeight: question.extra ? "85vh" : "95vh", overflow: "scroll" }}
+      >
         <CardContent>
           <Stack spacing={2} alignItems="center">
             <CardMedia
