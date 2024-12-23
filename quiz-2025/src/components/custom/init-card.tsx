@@ -18,7 +18,7 @@ const InitCard = () => {
           <div>
             12 questions, one for each month, about the year that has passed.
           </div>
-          <div className="text-lg my-2">Waiting users...</div>
+          <div className="my-2">Waiting for users to join...</div>
           <div className="max-w-1/2 flex gap-2 flex-wrap">
             {users.map((usr) => {
               return (

@@ -38,8 +38,12 @@ const StatsCard = () => {
                 className="flex flex-col gap-2 items-center justify-end"
               >
                 <div
-                  style={{ width: size, height: size }}
-                  className="rounded-full w-10 h-10 shrink-0 border-white/70 border-2 relative flex items-center justify-center"
+                  style={{
+                    width: size,
+                    height: size,
+                    borderColor: el?.id === user?.id ? color : "gray",
+                  }}
+                  className="rounded-full w-10 h-10 shrink-0 border-2 relative flex items-center justify-center"
                 >
                   <img
                     src={`https://api.dicebear.com/9.x/pixel-art/svg?seed=${el?.name}`}
