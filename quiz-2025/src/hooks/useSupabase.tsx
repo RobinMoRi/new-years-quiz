@@ -81,7 +81,8 @@ const useSupabase = () => {
 
   const updateUser = async (score: number) => {
     // Compute new score and update user
-    const oldScore = quizcard.user?.score;
+    const currUser = quizcard.users.find((el) => el.id === quizcard.user?.id);
+    const oldScore = currUser?.score;
     const userId = quizcard.user?.id;
     if (!userId) return;
     let newScore = 0;
@@ -111,13 +112,13 @@ const useSupabase = () => {
   };
 
   const resetQuiz = async () => {
-    // reset scores
-    const updates = quizcard.users.map((user) => ({ ...user, score: 0 }));
-    await supabase.from("users").upsert(updates);
     await supabase
       .from("quizstate")
       .update({ question_id: 1, current_state: QuizStepState.INIT })
       .eq("id", 2);
+    // reset scores
+    const updates = quizcard.users.map((user) => ({ ...user, score: 0 }));
+    await supabase.from("users").upsert(updates);
   };
 
   useEffect(() => {
