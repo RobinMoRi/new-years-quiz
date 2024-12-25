@@ -17,7 +17,8 @@ const InitCard = () => {
             Robin's 2025 New Years Quiz
           </div>
           <div>
-            12 questions, one for each month, about the year that has passed.
+            A fun 12-question quiz, with one question for each month, to see how
+            much you remember about the past year!
           </div>
           <div className="my-2 text-slate-400">Lobby</div>
           <div className="max-w-1/2 flex gap-2 flex-wrap">
