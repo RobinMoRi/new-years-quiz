@@ -20,6 +20,9 @@ const InitCard = () => {
             A fun 12-question quiz, with one question for each month, to see how
             much you remember about the past year!
           </div>
+          <div className="flex justify-center">
+            <img src="/qr.svg" width={150} />
+          </div>
           <div className="my-2 text-slate-400">Lobby</div>
           <div className="max-w-1/2 flex gap-2 flex-wrap">
             {users.map((usr) => {
