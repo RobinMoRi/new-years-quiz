@@ -10,15 +10,16 @@ const InitCard = () => {
         <img
           src="https://www.shutterstock.com/shutterstock/videos/3609066267/thumb/10.jpg?ip=x480"
           alt="ny-2025"
+          className="w-full"
         />
-        <CardDescription className="p-4">
+        <CardDescription className="p-4 text-primary-foreground">
           <div className="text-xl font-semibold">
             Robin's 2025 New Years Quiz
           </div>
           <div>
             12 questions, one for each month, about the year that has passed.
           </div>
-          <div className="my-2">Waiting for users to join...</div>
+          <div className="my-2 text-slate-400">Lobby</div>
           <div className="max-w-1/2 flex gap-2 flex-wrap">
             {users.map((usr) => {
               return (

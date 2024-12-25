@@ -3,13 +3,28 @@ import { Crown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 const StatsCard = () => {
-  const { user, users } = useQuizStore();
+  const { user, users, scores } = useQuizStore();
+
+  const getScoreByUserId = (userId: number) => {
+    return (
+      scores
+        .filter((el) => el.user_id === userId)
+        .reduce((total, el) => total + el?.score, 0) || 0
+    );
+  };
 
   const sortedUsers = users.sort((a, b) => {
-    if (!a.score && !b.score) return 0;
-    if (!a.score) return 1;
-    if (!b.score) return -1;
-    return b.score - a.score;
+    const scoreA = scores
+      .filter((el) => el.user_id === a.id)
+      .reduce((total, el) => total + el?.score, 0);
+    const scoreB = scores
+      .filter((el) => el.user_id === b.id)
+      .reduce((total, el) => total + el?.score, 0);
+
+    if (!scoreA && !scoreB) return 0;
+    if (!scoreA) return 1;
+    if (!scoreB) return -1;
+    return scoreB - scoreA;
   });
 
   const firstThree = sortedUsers.slice(0, 3);
@@ -58,7 +73,7 @@ const StatsCard = () => {
                 </div>
                 <div className="flex flex-col items-center">
                   <div className="font-bold">{el?.name}</div>
-                  <div style={{ color: color }}>{el?.score}</div>
+                  <div style={{ color: color }}>{getScoreByUserId(el?.id)}</div>
                 </div>
               </div>
             );
@@ -71,12 +86,7 @@ const StatsCard = () => {
                 <div className="flex items-center justify-center w-3 font-extrabold">
                   {idx + 4}
                 </div>
-                <div
-                  style={{
-                    border: el.id === user?.id ? "2px solid white" : "",
-                  }}
-                  className="flex flex-row justify-between w-full bg-purple-300/70 p-2 rounded-lg text-slate-800 font-bold"
-                >
+                <div className="flex flex-row justify-between w-full bg-tertiary p-2 py-6 rounded-lg text-white font-bold">
                   <div className="flex flex-row gap-2 items-center">
                     <img
                       src={`https://api.dicebear.com/9.x/pixel-art/svg?seed=${el?.name}`}
@@ -84,7 +94,7 @@ const StatsCard = () => {
                     />
                     {el?.name}
                   </div>
-                  <div> {el?.score}</div>
+                  <div> {getScoreByUserId(el?.id)}</div>
                 </div>
               </div>
             );

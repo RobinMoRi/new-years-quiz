@@ -43,21 +43,27 @@ export type Database = {
       }
       questions: {
         Row: {
+          category: string | null
           created_at: string
           id: number
           image_url: string | null
+          month: string | null
           title: string | null
         }
         Insert: {
+          category?: string | null
           created_at?: string
           id?: number
           image_url?: string | null
+          month?: string | null
           title?: string | null
         }
         Update: {
+          category?: string | null
           created_at?: string
           id?: number
           image_url?: string | null
+          month?: string | null
           title?: string | null
         }
         Relationships: []
@@ -87,6 +93,52 @@ export type Database = {
             columns: ["question_id"]
             isOneToOne: false
             referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scores: {
+        Row: {
+          answer_id: number
+          id: number
+          question_id: number
+          score: number
+          user_id: number
+        }
+        Insert: {
+          answer_id: number
+          id?: number
+          question_id: number
+          score?: number
+          user_id: number
+        }
+        Update: {
+          answer_id?: number
+          id?: number
+          question_id?: number
+          score?: number
+          user_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scores_answer_id_fkey"
+            columns: ["answer_id"]
+            isOneToOne: false
+            referencedRelation: "answers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "users_questions_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "users_questions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]

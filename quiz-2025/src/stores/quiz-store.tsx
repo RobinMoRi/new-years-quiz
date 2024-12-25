@@ -14,6 +14,7 @@ interface QuizValues {
   answers: Tables<"answers">[];
   user: Tables<"users"> | null;
   users: Tables<"users">[];
+  scores: Tables<"scores">[];
 }
 
 interface QuizActions {
@@ -23,6 +24,7 @@ interface QuizActions {
   setUser: (user: Tables<"users"> | undefined) => void;
   setUsers: (user: Tables<"users">[]) => void;
   updateUsers: (user: Tables<"users">) => void;
+  setScores: (scores: Tables<"scores">[]) => void;
 }
 
 type QuizState = QuizActions & QuizValues;
@@ -33,6 +35,7 @@ const initValues: QuizValues = {
   answers: [],
   user: null,
   users: [],
+  scores: [],
 };
 
 export const useQuizStore = create<QuizState>()((set) => ({
@@ -41,10 +44,12 @@ export const useQuizStore = create<QuizState>()((set) => ({
   answers: initValues.answers,
   user: initValues.user,
   users: initValues.users,
+  scores: initValues.scores,
   setState: (state) => set(() => ({ state })),
   setQuestion: (question) => set(() => ({ question })),
   setAnswers: (answers) => set(() => ({ answers })),
   setUser: (user) => set(() => ({ user })),
   setUsers: (users) => set(() => ({ users })),
   updateUsers: (user) => set((state) => ({ users: [...state.users, user] })),
+  setScores: (scores) => set(() => ({ scores })),
 }));

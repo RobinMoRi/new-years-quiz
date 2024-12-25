@@ -39,23 +39,7 @@ function App() {
   };
 
   const onSubmitAnswer = async (score: number, answer: Tables<"answers">) => {
-    const answered = window.localStorage.getItem("answered");
-    if (answered) {
-      const answeredJson: {
-        question: Tables<"questions">;
-        answer: Tables<"answers">;
-      }[] = JSON.parse(answered);
-      if (quizStore.question?.id) {
-        const newEntry = {
-          question: quizStore.question,
-          answer: answer,
-        };
-        answeredJson.push(newEntry);
-        window.localStorage.setItem("answered", JSON.stringify(answeredJson));
-      }
-    }
-
-    supabase.updateUser(score);
+    supabase.addScore(answer.question, answer.id, score);
   };
 
   let card = <InitCard />;
@@ -78,7 +62,7 @@ function App() {
           <div className="mt-6 flex flex-col md:flex-row gap-2 w-full">
             <Button
               variant="outline"
-              className="w-full"
+              className="w-full rounded-2xl py-6"
               disabled={quizStore.state?.current_state === QuizStepState.INIT}
               onClick={supabase.resetQuiz}
             >
@@ -86,7 +70,7 @@ function App() {
             </Button>
             <Button
               disabled={quizStore.state?.current_state === QuizStepState.END}
-              className="w-full"
+              className="w-full rounded-2xl py-6"
               onClick={supabase.handleUpdateQuizState}
             >
               Next

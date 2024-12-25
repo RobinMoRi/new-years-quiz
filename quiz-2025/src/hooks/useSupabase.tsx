@@ -79,25 +79,23 @@ const useSupabase = () => {
     return user;
   };
 
-  const updateUser = async (score: number) => {
-    // Compute new score and update user
-    const currUser = quizcard.users.find((el) => el.id === quizcard.user?.id);
-    const oldScore = currUser?.score;
+  const addScore = async (
+    questionId: number,
+    answerId: number,
+    score: number
+  ) => {
     const userId = quizcard.user?.id;
     if (!userId) return;
-    let newScore = 0;
-    if (oldScore !== undefined && oldScore !== null) {
-      newScore = oldScore + score;
-    }
-    console.log({ newScore });
-    const { data } = await supabase
-      .from("users")
-      .update({ score: newScore })
-      .eq("id", userId)
+
+    await supabase
+      .from("scores")
+      .insert({
+        score: score,
+        user_id: userId,
+        question_id: questionId,
+        answer_id: answerId,
+      })
       .select();
-    const user = data?.[0];
-    quizcard.setUser(user);
-    return user;
   };
 
   const getUser = async (user_id: number) => {
@@ -111,14 +109,22 @@ const useSupabase = () => {
     quizcard.setUsers(data || []);
   };
 
+  const getScores = async () => {
+    const { data } = await supabase.from("scores").select("*");
+    quizcard.setScores(data || []);
+  };
+
   const resetQuiz = async () => {
     await supabase
       .from("quizstate")
       .update({ question_id: 1, current_state: QuizStepState.INIT })
       .eq("id", 2);
+
     // reset scores
-    const updates = quizcard.users.map((user) => ({ ...user, score: 0 }));
-    await supabase.from("users").upsert(updates);
+    const updates = quizcard.users.map((user) => user.id);
+    for (const user of updates) {
+      await supabase.from("scores").delete().eq("user_id", user);
+    }
   };
 
   useEffect(() => {
@@ -137,12 +143,14 @@ const useSupabase = () => {
     }
 
     getUsers();
+    getScores();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quizcard.state]);
 
   useEffect(() => {
     getCurrentState().then(quizcard.setState);
     getUsers();
+    getScores();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -154,6 +162,10 @@ const useSupabase = () => {
 
   const onUsersUpdate = () => {
     getUsers();
+  };
+
+  const onScoresUpdate = () => {
+    getScores();
   };
 
   const handleUpdateQuizState = async () => {
@@ -182,9 +194,20 @@ const useSupabase = () => {
       { event: "INSERT", schema: "public", table: "users" },
       onUsersUpdate
     )
+    .on(
+      "postgres_changes",
+      { event: "INSERT", schema: "public", table: "scores" },
+      onScoresUpdate
+    )
     .subscribe();
 
-  return { handleUpdateQuizState, resetQuiz, addUser, getUser, updateUser };
+  return {
+    handleUpdateQuizState,
+    resetQuiz,
+    addUser,
+    getUser,
+    addScore,
+  };
 };
 
 export default useSupabase;
