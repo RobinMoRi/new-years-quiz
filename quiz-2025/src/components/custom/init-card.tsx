@@ -1,9 +1,13 @@
 import { useQuizStore } from "@/stores/quiz-store";
+import { useSearchParams } from "react-router";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardDescription } from "../ui/card";
 
 const InitCard = () => {
   const { users, user } = useQuizStore();
+  const [searchParams] = useSearchParams();
+
+  const isAdmin = searchParams.get("admin") === "true";
   return (
     <Card className="w-full">
       <CardContent className="p-0 overflow-hidden rounded-lg">
@@ -20,9 +24,11 @@ const InitCard = () => {
             A fun 12-question quiz, with one question for each month, to see how
             much you remember about the past year!
           </div>
-          <div className="flex justify-center">
-            <img src="/qr.svg" width={150} />
-          </div>
+          {isAdmin ? (
+            <div className="flex justify-center">
+              <img src="/qr.svg" width={150} />
+            </div>
+          ) : null}
           <div className="my-2 text-slate-400">Lobby</div>
           <div className="max-w-1/2 flex gap-2 flex-wrap">
             {users.map((usr) => {
