@@ -8,6 +8,8 @@ const InitCard = () => {
   const [searchParams] = useSearchParams();
 
   const isAdmin = searchParams.get("admin") === "true";
+
+  console.log("admin", searchParams.get("admin"));
   return (
     <Card className="w-full">
       <CardContent className="p-0 overflow-hidden rounded-lg">

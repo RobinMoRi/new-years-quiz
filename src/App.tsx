@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import {
-  VerticalTimeline,
-  VerticalTimelineElement,
-} from "react-vertical-timeline-component";
-import "react-vertical-timeline-component/style.min.css";
-import { useSearchParams } from "react-router-dom";
+import DoneIcon from "@mui/icons-material/Done";
+import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import PlayCircleFilledWhiteIcon from "@mui/icons-material/PlayCircleFilledWhite";
+import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
+import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 import {
   Button,
   Card,
@@ -14,21 +13,22 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { Question, questions } from "./questions";
-import QuestionCard, {
-  cardStyle,
-  AnswersForm,
-} from "./components/QuestionCard";
-import Confetti from "react-confetti";
-import PlayCircleFilledWhiteIcon from "@mui/icons-material/PlayCircleFilledWhite";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
-import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
-import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
-import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
-import DoneIcon from "@mui/icons-material/Done";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { useEffect, useRef, useState } from "react";
+import Confetti from "react-confetti";
+import { useSearchParams } from "react-router-dom";
+import {
+  VerticalTimeline,
+  VerticalTimelineElement,
+} from "react-vertical-timeline-component";
+import "react-vertical-timeline-component/style.min.css";
 import "./App.css";
+import QuestionCard, {
+  AnswersForm,
+  cardStyle,
+} from "./components/QuestionCard";
+import { Question, questions } from "./questions";
 declare module "@mui/material/styles" {
   interface Theme {
     overrides: Object;

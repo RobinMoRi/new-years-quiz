@@ -41,7 +41,7 @@ const QuizCard = ({
     let score = 0;
     if (answer.correct) {
       // Update user with score
-      score = Math.round((120 / (time + 1)) * 100); // Shouldn't take more than 2 min to answer a question
+      score = Math.round((180 / (time + 1)) * 100); // Shouldn't take more than 2 min to answer a question
     }
     onSubmit(score, answer);
   };
@@ -53,12 +53,14 @@ const QuizCard = ({
           <Badge className="absolute bottom-4 left-4" variant="secondary">
             {question?.month}
           </Badge>
+
           {question && question.image_url ? (
             <img src={question.image_url} />
           ) : null}
         </div>
       </CardHeader>
       <CardContent className="pt-6">
+        <div className="text-md mb-2 text-slate-400">{question?.category}</div>
         <div className="text-lg mb-4">{question?.title}</div>
         <div className="grid grid-cols-1 gap-2">
           {answers.map((ans) => {
