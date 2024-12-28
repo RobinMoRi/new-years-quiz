@@ -30,6 +30,9 @@ const QuizCard = ({
 
     if (score) {
       setAnswerId(score.answer_id);
+    } else {
+      // Reset answer if no score found for this question
+      setAnswerId(undefined);
     }
   }, [scores, question?.id, user?.id]);
 
