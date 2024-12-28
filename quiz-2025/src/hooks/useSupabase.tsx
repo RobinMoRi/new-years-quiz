@@ -2,47 +2,55 @@ import { supabase } from "@/utils/supabase";
 
 import { Tables } from "@/database.types";
 import { QuizStepState, useQuizStore } from "@/stores/quiz-store";
-import { RealtimePostgresUpdatePayload } from "@supabase/supabase-js";
-import { useEffect } from "react";
+import {
+  RealtimeChannel,
+  RealtimePostgresUpdatePayload,
+} from "@supabase/supabase-js";
+import { useEffect, useRef } from "react";
 
 const getNextState = (
   state: Tables<"quizstate"> | null,
   question: Tables<"questions"> | null
 ) => {
   if (!state || !question) return;
+
   const MAX_QUESTIONS = 12;
+  let nextState = state.current_state;
+  let nextQuestionId = question.id;
 
-  const currQuestion = question.id;
-  const currState = state.current_state;
-
-  let current_state = 0;
-
-  if (currQuestion && currQuestion < MAX_QUESTIONS) {
-    if (currState === QuizStepState.INIT) {
-      current_state = QuizStepState.QUESTION;
-    } else if (currState === QuizStepState.QUESTION) {
-      current_state = QuizStepState.STATISTIC;
-    } else if (currState === QuizStepState.STATISTIC) {
-      current_state = QuizStepState.QUESTION;
+  if (nextQuestionId >= MAX_QUESTIONS) {
+    nextState = QuizStepState.END;
+    nextQuestionId = MAX_QUESTIONS;
+  } else if (nextState === QuizStepState.INIT) {
+    // INIT → QUESTION
+    nextState = QuizStepState.QUESTION;
+  } else if (nextState === QuizStepState.QUESTION) {
+    // QUESTION → STATISTIC
+    nextState = QuizStepState.STATISTIC;
+  } else if (nextState === QuizStepState.STATISTIC) {
+    // STATISTIC → next QUESTION
+    nextQuestionId += 1;
+    if (nextQuestionId >= MAX_QUESTIONS) {
+      // If we exceed MAX_QUESTIONS, lock at END
+      nextQuestionId = MAX_QUESTIONS;
+      nextState = QuizStepState.END;
+    } else {
+      nextState = QuizStepState.QUESTION;
     }
   } else {
-    current_state = QuizStepState.END;
+    nextState = QuizStepState.END;
+    nextQuestionId = MAX_QUESTIONS + 1;
   }
 
-  let question_id = currQuestion;
-  if (current_state === QuizStepState.STATISTIC) {
-    // pre-fetch question when seeing statistics
-    question_id += 1;
-    if (question_id > MAX_QUESTIONS) {
-      question_id = 12;
-    }
-  }
-
-  return { current_state, question_id };
+  return {
+    current_state: nextState,
+    question_id: nextQuestionId,
+  };
 };
 
 const useSupabase = () => {
   const quizcard = useQuizStore();
+  const subscriptionRef = useRef<RealtimeChannel | null>(null);
 
   const getCurrentState = async () => {
     const { data } = await supabase.from("quizstate").select().eq("id", 2);
@@ -157,6 +165,7 @@ const useSupabase = () => {
   const onStateUpdate = (
     payload: RealtimePostgresUpdatePayload<Tables<"quizstate">>
   ) => {
+    console.log("State update", payload.new);
     quizcard.setState(payload.new);
   };
 
@@ -168,38 +177,45 @@ const useSupabase = () => {
     getScores();
   };
 
+  useEffect(() => {
+    if (subscriptionRef.current) return; // Prevent duplicate subscriptions
+
+    subscriptionRef.current = supabase
+      .channel("quiz")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "quizstate" },
+        onStateUpdate
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "users" },
+        onUsersUpdate
+      )
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "users" },
+        onUsersUpdate
+      )
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "scores" },
+        onScoresUpdate
+      )
+      .subscribe((status) => {
+        console.log("Subscription status:", status);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleUpdateQuizState = async () => {
     const nextState = getNextState(quizcard.state, quizcard.question);
+
     await supabase
       .from("quizstate")
       .update({ ...nextState })
       .eq("id", 2);
   };
-
-  // Listen to db updates
-  supabase
-    .channel("quiz")
-    .on(
-      "postgres_changes",
-      { event: "UPDATE", schema: "public", table: "quizstate" },
-      onStateUpdate
-    )
-    .on(
-      "postgres_changes",
-      { event: "UPDATE", schema: "public", table: "users" },
-      onUsersUpdate
-    )
-    .on(
-      "postgres_changes",
-      { event: "INSERT", schema: "public", table: "users" },
-      onUsersUpdate
-    )
-    .on(
-      "postgres_changes",
-      { event: "INSERT", schema: "public", table: "scores" },
-      onScoresUpdate
-    )
-    .subscribe();
 
   return {
     handleUpdateQuizState,

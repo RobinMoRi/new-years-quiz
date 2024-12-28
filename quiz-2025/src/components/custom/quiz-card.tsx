@@ -31,7 +31,7 @@ const QuizCard = ({
     if (score) {
       setAnswerId(score.answer_id);
     }
-  }, [scores]);
+  }, [scores, question?.id, user?.id]);
 
   const onSetAnswer = (answer: Tables<"answers">) => {
     if (!answer) {
