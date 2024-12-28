@@ -18,28 +18,35 @@ const getNextState = (
   let nextState = state.current_state;
   let nextQuestionId = question.id;
 
-  if (nextQuestionId >= MAX_QUESTIONS) {
+  // 1) If already beyond the last valid question, clamp to END at question_id=12
+  if (nextQuestionId > MAX_QUESTIONS) {
     nextState = QuizStepState.END;
     nextQuestionId = MAX_QUESTIONS;
-  } else if (nextState === QuizStepState.INIT) {
-    // INIT → QUESTION
+  }
+  // 2) INIT → QUESTION (same question_id)
+  else if (nextState === QuizStepState.INIT) {
     nextState = QuizStepState.QUESTION;
-  } else if (nextState === QuizStepState.QUESTION) {
-    // QUESTION → STATISTIC
-    nextState = QuizStepState.STATISTIC;
-  } else if (nextState === QuizStepState.STATISTIC) {
-    // STATISTIC → next QUESTION
+  }
+  // 3) QUESTION → STATISTIC: increment question_id (prefetch next question)
+  else if (nextState === QuizStepState.QUESTION) {
     nextQuestionId += 1;
-    if (nextQuestionId >= MAX_QUESTIONS) {
-      // If we exceed MAX_QUESTIONS, lock at END
+    if (nextQuestionId > MAX_QUESTIONS) {
+      // If increment exceeds the max, go to END
       nextQuestionId = MAX_QUESTIONS;
       nextState = QuizStepState.END;
     } else {
-      nextState = QuizStepState.QUESTION;
+      // Otherwise, go to STATISTIC
+      nextState = QuizStepState.STATISTIC;
     }
-  } else {
+  }
+  // 4) STATISTIC → QUESTION (same question_id)
+  else if (nextState === QuizStepState.STATISTIC) {
+    nextState = QuizStepState.QUESTION;
+  }
+  // 5) If we’re already at END (or unrecognized state), remain there
+  else {
     nextState = QuizStepState.END;
-    nextQuestionId = MAX_QUESTIONS + 1;
+    nextQuestionId = MAX_QUESTIONS;
   }
 
   return {
