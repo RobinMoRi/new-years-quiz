@@ -72,7 +72,9 @@ const StatsCard = () => {
                   ) : null}
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="font-bold">{el?.name}</div>
+                  <div className="font-bold">
+                    {el?.name} {el?.id === user?.id ? "(you)" : ""}
+                  </div>
                   <div style={{ color: color }}>{getScoreByUserId(el?.id)}</div>
                 </div>
               </div>
@@ -92,7 +94,7 @@ const StatsCard = () => {
                       src={`https://api.dicebear.com/9.x/pixel-art/svg?seed=${el?.name}`}
                       width={24}
                     />
-                    {el?.name}
+                    {el?.name} {el?.id === user?.id ? "(you)" : ""}
                   </div>
                   <div> {getScoreByUserId(el?.id)}</div>
                 </div>
